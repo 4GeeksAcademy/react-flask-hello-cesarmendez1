@@ -1,16 +1,14 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
-
+import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
-import {useNavigate} from "react-router-dom";
 
-export const Home = () => {
+export const Login = () => {
+    const navigate=useNavigate()
 	const { store, actions } = useContext(Context);
-	const navigate=useNavigate()
 	const [data,setData]=useState({
 		email:"",
-		username:"",
-		name:"",
+		
 		password:""
 	})
 	const imput=(e)=>{
@@ -19,19 +17,19 @@ export const Home = () => {
 			...previewdata,[name]:value
 		}));
 	}
-	const registro=async(e)=>{
+	const login=async(e)=>{
 		e.preventDefault();
-		const resultado= await actions.registro(data.email,data.username,data.password,data.name)
-		if (resultado) {
-			navigate("/login")
+		const resultado= await actions.login(data.email,data.password)
+        if (resultado) {
+			navigate("/demo")
 		}else {
-			alert ("registro fallido")
+			alert ("login fallido")
 		}
 	}
 	return (
 		<div className=" mt-5 container">
-			<h1>Registro</h1>
-			<form className="row g-3" onSubmit={registro}>
+			<h1>Login</h1>
+			<form className="row g-3" onSubmit={login}>
 				<div className="col-12">
 					<label htmlFor="inputEmail4" className="form-label">Email</label>
 					<input type="email" className="form-control" id="inputEmail4" name="email" value={data.email} onChange={imput} />
@@ -40,20 +38,13 @@ export const Home = () => {
 					<label htmlFor="inputPassword4" className="form-label">Password</label>
 					<input type="password" className="form-control" id="inputPassword4" name="password" value={data.password} onChange={imput} />
 				</div>
-				<div className="col-12">
-					<label htmlFor="inputAddress" className="form-label">Username</label>
-					<input type="text" className="form-control" id="inputAddress" name="username" value={data.username} onChange={imput} />
-				</div>
-				<div className="col-12">
-					<label htmlFor="inputAddress2" className="form-label">Name</label>
-					<input type="text" className="form-control" id="inputAddress2" name="name" value={data.name} onChange={imput} />
-				</div>
+				
 
 
 
 
 				<div className="col-12">
-					<button type="submit" className="btn btn-primary">Sign in</button>
+					<button type="submit" className="btn btn-primary">Login</button>
 				</div>
 			</form>
 		</div>

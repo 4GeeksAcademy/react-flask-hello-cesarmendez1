@@ -6,6 +6,7 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import json
+from flask_jwt_extended import create_access_token
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
@@ -33,3 +34,15 @@ def create_user():
     db.session.add(newuser)
     db.session.commit()
     return jsonify({"msg":"usuario creado con exito"}),200
+@api.route('/login', methods=['POST'])
+def login():
+    email=request.json.get("email",None)
+    password=request.json.get("password",None)
+    user=User.query.filter_by(email=email).first()
+    if user is None:
+        return jsonify({"msg":"usuario no encontrado"}),404
+    valid_password=current_app.bcrypt.check_password_hash(user.password,password)
+    if valid_password is None:
+        return jsonify({"msg":"password invalido"}),404
+    access_token=create_access_token(identity=email)
+    return jsonify(access_token=access_token),200
