@@ -6,21 +6,25 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import json
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
 
 
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
+@api.route('/usuario', methods=['GET'])
+@jwt_required()
+def get_user():
+    email=get_jwt_identity()
+    user=User.query.filter_by(email=email).first()
+    if user is None:
+        return jsonify({"msg":"usuario no encontrado"}),400
+    return jsonify({"user":user.serialize()}),200
 
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
+   
 
-    return jsonify(response_body), 200
+   
 
 @api.route('/registro', methods=['POST'])
 def create_user():
